@@ -12,7 +12,11 @@
         <!-- Styles -->
         <style>
             html, body {
-                background-color: #fff;
+                background-image: url("{{ asset('images/main.jpg') }}");
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
                 color: #636b6f;
                 font-family: 'Nunito', sans-serif;
                 font-weight: 200;
@@ -61,6 +65,11 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+            a{
+                padding: 5px;
+                margin-right: 40px;
+                border: 1px solid #636b6f;
+            }
         </style>
     </head>
     <body>
@@ -68,17 +77,55 @@
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
+                        @if(Auth::user()->isDisabled())
+                            <a href="{{ url('/') }}" class="" >Главная</a>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
+                        @elseif(Auth::user()->isUser())
+                            <a href="{{ url('/') }}" class="" >Главная</a>
+                            <a href="{{ url('/user/index') }}" class="" >Кабинет</a>
+
+                        @elseif(Auth::user()->isVisible())
+                            <a href="{{ url('/') }}" class="" >Главная</a>
+
+                        @elseif(Auth::user()->isAdministrator())
+                            <a href="{{ url('/') }}" class="" >Главная</a>
+                            <a href="{{ url('/admin/index') }}" class="" >Панель Администратора</a>
+
                         @endif
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                           onclick="event.preventDefault();
+                           document.getElementById('logout-form').submit();
+                        ">Выйти</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="post" >
+                            {{ method_field('POST') }}
+                            @csrf
+                        </form>
+
+                @else
+                    <a class="" href="{{ route('login') }}" >Войти</a>
+                    @if (Route::has('register'))
+                        <a class="" href="{{ route('register') }}" >Регистрация</a>
+                    @endif
                     @endauth
                 </div>
             @endif
 
+            <!--
+            \@\if (Route::has('login'))
+
+                <div class="top-right links">
+                    @\auth
+                        <a href="\{\{ url('/home') }}">Home</a>
+                    @\else
+                        <a href="\{\{ route('login') }}">Login</a>
+
+                        @\if (Route::has('register'))
+                            <a href="\{\{ route('register') }}">Register</a>
+                        @\endif
+                    @\e n d a u t h
+                </div>
+
+            \@\endif
             <div class="content">
                 <div class="title m-b-md">
                     Laravel
@@ -94,6 +141,7 @@
                     <a href="https://github.com/laravel/laravel">GitHub</a>
                 </div>
             </div>
+            -->
         </div>
     </body>
 </html>
